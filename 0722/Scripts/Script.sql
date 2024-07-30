@@ -1,4 +1,4 @@
-CREATE TABLE mycompany.Patient(
+CREATE TABLE mycompany.patient(
 	number 		TINYINT,
     code		CHAR(2) NOT NULL,
     days		SMALLINT NOT NULL,	

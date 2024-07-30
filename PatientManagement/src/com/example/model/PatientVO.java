@@ -17,6 +17,10 @@ public class PatientVO {
 		this.age = age;
 	}
 
+	public PatientVO() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getDept() {
 		return dept;
 	}
@@ -51,6 +55,10 @@ public class PatientVO {
 
 	public int getNumber() {
 		return number;
+	}
+	
+	public void setNumber( int number ) {
+		this.number = number;
 	}
 
 	public String getCode() {

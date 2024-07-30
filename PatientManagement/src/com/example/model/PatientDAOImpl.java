@@ -1,8 +1,11 @@
 package com.example.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatientDAOImpl implements PatientDAO {
@@ -37,6 +40,32 @@ public class PatientDAOImpl implements PatientDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<PatientVO> readAllPatient() throws SQLException{
+		String sql = "SELECT number, dept, operfee, hospitalfee, money";
+		sql += " FROM Patient ORDER BY number DESC";
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		List<PatientVO> list = new ArrayList<PatientVO>();
+		
+		while(rs.next()) { // 6.
+			int number = rs.getInt( "number" );
+			String dept = rs.getString( "dept" );
+			int operfee = rs.getInt( "operfee" );
+			int hospitalfee = rs.getInt( "hospitalfee" );
+			int money = rs.getInt( "money" );
+			
+			PatientVO p = new PatientVO();
+			p.setNumber(number); 	p.setDept(dept);
+			p.setOperFee(operfee); 	p.setHospitalFee(hospitalfee);
+			p.setMoney(money);
+			list.add(p);
+		}
+		
+		DBClose.dbClose(conn, stmt, rs);
+		return list;
+	}
 
 	@Override
 	public boolean updatePatient(PatientVO p) {
@@ -45,15 +74,15 @@ public class PatientDAOImpl implements PatientDAO {
 	}
 
 	@Override
-	public boolean deletePatient(int number) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public List<PatientVO> readAllPatient() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean deletePatient(int number) throws SQLException {
+		//Statement stmt = this.conn.createStatement();
+		String sql = "DELETE FROM Patient WHERE number = ?"; // 불완전한 SQL문
+		PreparedStatement pstmt = this.conn.prepareStatement( sql ); // 4.
+		pstmt.setInt(1, number); // 완전한 SQL 문장
+		int row = pstmt.executeUpdate(); // 5.
+		DBClose.dbClose( conn, pstmt );
+		
+		return (row == 1 ) ? true : false;
 	}
 
 }
