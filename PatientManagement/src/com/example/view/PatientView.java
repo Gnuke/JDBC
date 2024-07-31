@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import com.example.controller.DeleteController;
 import com.example.controller.InsertController;
 import com.example.controller.SelectController;
+import com.example.controller.UpdateController;
 import com.example.model.PatientVO;
 
 public class PatientView {
@@ -21,17 +22,79 @@ public class PatientView {
 		while( isCountinue ) {
 			switch( showMenu() ) {
 				case 1: insertMenu(); break;
-				case 2:
-				case 3:
-				case 4:
+				case 2: selectMenu(); break;
+				case 3: selectAllMenu(); break;
+				case 4: updateMenu(); break;
 				case 5: deleteMenu(); break;
 				case 99: 
 					isCountinue = false; break;
-				default: System.out.println( "잘못된 번호를 입력하셨습니다" );
+				default: System.out.println( "잘못된 번호를 입력하셨습니다." );
 				JOptionPane.showMessageDialog( null, "잘못된 번호를 입력하셨습니다." );
 			}
 		}
 		JOptionPane.showMessageDialog( null, "Program is over..." );
+	}
+
+	
+	// Methods-------------------------------------------------------------------------------------
+	private void updateMenu() {
+		SelectController sc = new SelectController();
+		System.out.print( "검색하실 환자번호 : " ); int number = this.scan.nextInt();
+		PatientVO p = sc.selectPatient(number);
+		if( p == null ) { // 환자가 없을 때
+			System.out.println( "검색하신 환자를 찾을 수 없습니다." );
+		}else { // 환자가 있을 때 , 반복 X
+			System.out.println( "환자등록번호 : " + p.getNumber() );
+			System.out.println( "1)환자진료코드 : " + p.getCode() );
+			System.out.println( "2)환자입원일수 : " + p.getDays() );
+			System.out.println( "3)환자나이 : " + p.getAge() );
+			System.out.println();
+			System.out.print( "수정하실 항목의 번호 : " ); int choice = this.scan.nextInt();
+			switch(choice) {
+				case 1:
+					System.out.print( "수정하실 진료코드 : " ); String code = this.scan.next();
+					p.setCode(code); break;
+				case 2:
+					System.out.print( "수정하실 입원일수 : " ); int days = this.scan.nextInt();
+					p.setDays(days); break;
+				case 3:
+					System.out.print( "수정하실 환자나이 : " ); int age = this.scan.nextInt();
+					p.setAge(age); break;
+			}
+			UpdateController uc = new UpdateController();
+			p.setNumber(number);
+			boolean flag = uc.update(p);
+			if( flag ) System.out.println( "환자 정보 수정 성공" );
+			else System.out.println( "환자 정보 수정 실패" );
+		}
+	}
+
+	private void selectMenu() {
+		SelectController sc = new SelectController();
+		System.out.print( "검색하실 환자번호 : " ); int number = this.scan.nextInt();
+		PatientVO p = sc.selectPatient( number );
+		if( p == null ) { // 환자가 없을 때
+			System.out.println( "검색하신 환자를 찾을 수 없습니다." );
+		}else { // 환자가 있을 때 , 반복 X
+			System.out.println( "번호\t진찰부서\t진찰비\t입원비\t진료비" );
+			System.out.println( "---------------------------------------------------" );
+			System.out.printf( "%d\t%s\t%,d\t%,d\t%,d%n",
+					p.getNumber(), p.getDept(), p.getOperFee(), p.getHospitalFee(), p.getMoney() );
+		}
+	}
+	
+	private void selectAllMenu() {
+		SelectController sc = new SelectController();
+		List<PatientVO> list = sc.selectAllPatient();
+		System.out.println( "번호\t진찰부서\t진찰비\t입원비\t진료비" );
+		System.out.println( "---------------------------------------------------" );
+		
+		if( list == null || list.size() == 0 ) System.out.println( "등록된 환자가 없습니다" );
+		else if( list.size() > 0 ) {
+		list.forEach( p -> System.out.printf( "%d\t%s\t%,d\t%,d\t%,d%n",
+							p.getNumber(), p.getDept(), p.getOperFee(),
+							p.getHospitalFee(), p.getMoney() ));
+		}
 	}
 	
 	private void deleteMenu() {
@@ -39,7 +102,7 @@ public class PatientView {
 		List<PatientVO> list = sc.selectAllPatient();
 		System.out.println( "번호\t진찰부서\t진찰비\t입원비\t진료비" );
 		System.out.println( "---------------------------------------------------" );
-		list.forEach( p -> System.out.printf( "%d\t%s\t%,d\t%d\t%d%n",
+		list.forEach( p -> System.out.printf( "%d\t%s\t%,d\t%,d\t%,d%n",
 							p.getNumber(), p.getDept(), p.getOperFee(),
 							p.getHospitalFee(), p.getMoney() ));
 		System.out.println( "삭제할 환자 등록 번호 : " );

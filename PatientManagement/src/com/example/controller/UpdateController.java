@@ -6,22 +6,24 @@ import com.example.model.PatientDAO;
 import com.example.model.PatientDAOImpl;
 import com.example.model.PatientVO;
 
-public class InsertController {
+public class UpdateController {
 	private PatientDAO pDao;
 	
-	public InsertController() {
-		// TODO Auto-generated constructor stub
-		pDao = new PatientDAOImpl();
+	public UpdateController() {
+		this.pDao = new PatientDAOImpl();
 	}
 	
-	public boolean insert( PatientVO p ) {
-		boolean result = false;
+	public boolean update(PatientVO p) {
+		boolean flag = false;
 		try {
 			CalcController cc = new CalcController(p);
-			result = pDao.createPatient(p);
+			this.pDao.updatePatient(p);
+			flag = true;
 		}catch( SQLException e ) {
 			System.out.println( e.getMessage() );
+			flag = false;
 		}
-		return result;
+		return flag;
 	}
+
 }
